@@ -1,0 +1,28 @@
+---
+- name: Install r1soft on any OS
+  hosts: all
+  tasks:
+    - name: Create Repo on RedHat Family
+      when: ( ansible_distribution == "CentOS"  and ansible_distribution_major_version == "6" ) or
+            ( ansible_distribution == "CentOS"  and ansible_distribution_major_version == "7" ) or
+            ( ansible_distribution == "Fedora")
+      copy:
+        src: /etc/ansible/playbooks/r1soft.repo
+        dest: /etc/yum.repos.d/r1soft.repo
+
+
+
+    - name: Install r1soft
+      when: ( ansible_distribution == "CentOS"  and ansible_distribution_major_version == "6" ) or
+            ( ansible_distribution == "CentOS"  and ansible_distribution_major_version == "7" ) or
+            ( ansible_distribution == "Fedora")
+      package:
+        name: serverbackup-enterprise-agent
+      ignore_errors: true
+
+
+    - name: Start r1soft on Centos 7
+      when: ( ansible_distribution == "CentOS" and ansible_distribution_major_version == "7")
+      systemd:
+        name: sbm-agent        #cdp-agent
+        state: started 
